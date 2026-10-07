@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Design tokens. Ink-on-cool-paper with one cobalt accent; status colors all pass WCAG AA on white. */
+@theme {
+  --color-paper: #f2f5fb;
+  --color-ink: #14213d;
+  --color-muted: #4a5878;
+  --color-cobalt: #2848d8;
+  --color-mint: #0e7a4e;
+  --color-amber: #a64b05;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+}
+
+body { @apply bg-paper text-ink antialiased; font-family: system-ui, sans-serif; }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
+:focus-visible { outline: 3px solid var(--color-cobalt); outline-offset: 2px; }
+
+/* Flashcard 3D flip: the one signature motion in the app. */
+.flip-scene { perspective: 1200px; }
+.flip-inner { transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(.3,.7,.2,1); }
+.flip-inner.is-flipped { transform: rotateY(180deg); }
+.flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
