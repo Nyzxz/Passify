@@ -1,11 +1,14 @@
 import { AuthService } from "../services/auth.service.js";
 import { HttpError } from "../services/studySet.service.js";
 
-// Mock auth middleware: reads "Authorization: Bearer mock.xxx" and attaches req.user.
-export const requireAuth = (req, res, next) => {
+export const requireAuth = async (req, res, next) => {
   const token = req.headers.authorization?.replace("Bearer ", "");
-  const user = token && AuthService.userFromToken(token);
-  if (!user) return next(new HttpError(401, "Sign in to continue"));
-  req.user = user;
-  next();
+  try {
+    const user = token && await AuthService.userFromToken(token);
+    if (!user) return next(new HttpError(401, "Sign in to continue"));
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
 };

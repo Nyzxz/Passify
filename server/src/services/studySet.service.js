@@ -6,15 +6,18 @@ export class HttpError extends Error {
 }
 
 export const StudySetService = {
-  list: () => StudySetModel.findAll().map(({ cards, guide, ...meta }) => ({ ...meta, cardCount: cards.length })),
+  async list() {
+    const sets = await StudySetModel.findAll();
+    return sets.map(({ cards, guide, ...meta }) => ({ ...meta, cardCount: cards.length }));
+  },
 
-  get(id) {
-    const set = StudySetModel.findById(id);
+  async get(id) {
+    const set = await StudySetModel.findById(id);
     if (!set) throw new HttpError(404, `Study set "${id}" not found`);
     return set;
   },
 
-  create({ title, subject, description = "", examDate = null, cards = [] }) {
+  async create({ title, subject, description = "", examDate = null, cards = [] }) {
     if (!title?.trim()) throw new HttpError(400, "Title is required");
     const valid = cards.filter((c) => c.front?.trim() && c.back?.trim());
     if (valid.length === 0) throw new HttpError(400, "Add at least one complete flashcard");

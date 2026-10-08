@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Chrome, Apple, KeyRound, Loader2 } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { useStudyStore } from "../store/useStudyStore.js";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,7 +27,7 @@ function Field({ id, label, error, children }) {
 }
 
 export default function AuthModal({ mode: initial, onClose }) {
-  const { login, register, oauth } = useStudyStore();
+  const { login, register } = useStudyStore();
   const navigate = useNavigate();
   const [mode, setMode] = useState(initial);
   const [v, setV] = useState({ name: "", email: "", password: "", role: "" });
@@ -52,7 +52,6 @@ export default function AuthModal({ mode: initial, onClose }) {
     setBusy(false);
     res.ok ? navigate("/app") : setFormError(res.error);
   };
-  const social = async (p) => { setBusy(true); await oauth(p); navigate("/app"); };
   const ariaFor = (k) => ({ "aria-invalid": !!errors[k], "aria-describedby": errors[k] ? `${k}-err` : undefined });
 
   return (
@@ -68,14 +67,7 @@ export default function AuthModal({ mode: initial, onClose }) {
           <button onClick={onClose} aria-label="Close" className="rounded-lg p-2 text-muted hover:bg-surface"><X size={18} /></button>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-2">
-          {[["Google", Chrome], ["Apple", Apple], ["SSO", KeyRound]].map(([p, Icon]) => (
-            <button key={p} disabled={busy} onClick={() => social(p)} className="flex items-center justify-center gap-1.5 rounded-xl border border-line py-2 text-sm font-semibold transition hover:bg-surface disabled:opacity-50">
-              <Icon size={16} aria-hidden /> {p}
-            </button>
-          ))}
-        </div>
-        <p className="my-4 text-center text-sm text-muted">or use your email</p>
+        <p className="my-5 text-sm text-muted">Use your email and password to access your account on any device.</p>
 
         <form onSubmit={submit} noValidate className="space-y-3">
           {mode === "signup" && <Field id="name" label="Full name" error={errors.name}><input id="name" autoFocus autoComplete="name" className={input} value={v.name} onChange={set("name")} {...ariaFor("name")} /></Field>}

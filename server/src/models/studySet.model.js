@@ -1,11 +1,15 @@
-import { studySets } from "../data/mockData.js";
+import { StudySet } from "./db.js";
 
-// In-memory "table". Replace these functions with DB queries later;
-// the service layer above should not need to change.
-const table = [...studySets];
+const toPlain = (record) => {
+  if (!record) return null;
+  const value = record.toObject ? record.toObject({ versionKey: false }) : record;
+  delete value._id;
+  delete value.__v;
+  return value;
+};
 
 export const StudySetModel = {
-  findAll: () => table,
-  findById: (id) => table.find((s) => s.id === id) ?? null,
-  insert: (record) => { table.unshift(record); return record; },
+  findAll: async () => (await StudySet.find().sort({ updatedAt: -1 }).lean()).map(toPlain),
+  findById: async (id) => toPlain(await StudySet.findOne({ id }).lean()),
+  insert: async (record) => toPlain(await StudySet.create(record)),
 };

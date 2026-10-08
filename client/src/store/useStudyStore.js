@@ -4,8 +4,21 @@ import { studySets } from "../data/mockData.js";
 import { mockFolders } from "../data/mockFolders.js";
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const uid = () => Math.random().toString(36).slice(2, 9);
+
+async function apiRequest(path, { token, body } = {}) {
+  const response = await fetch(`/api${path}`, {
+    method: body ? "POST" : "GET",
+    headers: {
+      ...(body ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "The request could not be completed.");
+  return result.data;
+}
 
 // Walk parentId links upward: [root, ..., folder]. Used by breadcrumbs and tree auto-expand.
 export const folderPath = (folders, id) => {
@@ -14,32 +27,48 @@ export const folderPath = (folders, id) => {
   return out;
 };
 
-// Local state. Auth is simulated: swap login/register for fetch("/api/auth/...") when wiring the server.
+// Authentication uses the API; study content remains local until its API is connected.
 export const useStudyStore = create(
   persist(
     (set, get) => ({
       // --- session & UI ---
-      user: null, token: null, theme: "dark", uploadOpen: false, paletteOpen: false,
+      user: null, token: null, authReady: false, theme: "dark", uploadOpen: false, paletteOpen: false,
       setUploadOpen: (uploadOpen) => set({ uploadOpen }),
       setPaletteOpen: (paletteOpen) => set({ paletteOpen }),
       toggleTheme: () => set((s) => ({ theme: s.theme === "dark" ? "light" : "dark" })),
 
       async login({ email, password }) {
-        await wait(500);
-        if (!EMAIL.test(email) || password.length < 8) return { ok: false, error: "Email or password is incorrect." };
-        set({ user: { id: "u1", name: email.split("@")[0], email, role: "Undergraduate" }, token: `mock.${uid()}` });
-        return { ok: true };
+        try {
+          const session = await apiRequest("/auth/login", { body: { email, password } });
+          set({ user: session.user, token: session.token, authReady: true });
+          return { ok: true };
+        } catch (error) {
+          return { ok: false, error: error.message };
+        }
       },
-      async register({ name, email, role }) {
-        await wait(600);
-        set({ user: { id: `u-${uid()}`, name, email, role }, token: `mock.${uid()}` });
-        return { ok: true };
+      async register({ name, email, password, role }) {
+        try {
+          const session = await apiRequest("/auth/register", { body: { name, email, password, role } });
+          set({ user: session.user, token: session.token, authReady: true });
+          return { ok: true };
+        } catch (error) {
+          return { ok: false, error: error.message };
+        }
       },
-      async oauth(provider) {
-        await wait(500);
-        set({ user: { id: "u1", name: `${provider} student`, email: `student@${provider.toLowerCase()}.mock`, role: "Undergraduate" }, token: `mock.${uid()}` });
+      async restoreSession() {
+        const token = get().token;
+        if (!token) {
+          set({ user: null, authReady: true });
+          return;
+        }
+        try {
+          const user = await apiRequest("/auth/me", { token });
+          set({ user, authReady: true });
+        } catch {
+          set({ user: null, token: null, authReady: true });
+        }
       },
-      logout: () => set({ user: null, token: null }),
+      logout: () => set({ user: null, token: null, authReady: true }),
 
       // --- folders & review sets (a "set" belongs to one folder, or null = unfiled) ---
       folders: mockFolders,

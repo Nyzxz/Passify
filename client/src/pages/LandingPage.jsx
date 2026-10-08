@@ -23,7 +23,7 @@ function Preview({ tab }) {
 }
 
 export default function LandingPage() {
-  const { user, theme, toggleTheme } = useStudyStore();
+  const { user, theme, toggleTheme, authReady } = useStudyStore();
   const [auth, setAuth] = useState(null); // null | "signin" | "signup"
   const [tab, setTab] = useState("import");
   const active = TABS.find((t) => t.id === tab);
@@ -34,7 +34,7 @@ export default function LandingPage() {
         <span className="flex items-center gap-2 font-display text-xl font-extrabold"><GraduationCap className="text-cobalt" aria-hidden /> Passify</span>
         <div className="flex items-center gap-2">
           <button onClick={toggleTheme} aria-label="Toggle theme" className="rounded-lg p-2 text-muted hover:bg-surface">{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}</button>
-          {user ? <Link to="/app" className="glow-btn rounded-xl px-4 py-2 font-semibold">Open app</Link> : (<>
+          {!authReady ? <span role="status" className="px-4 py-2 text-sm text-muted">Checking session...</span> : user ? <Link to="/app" className="glow-btn rounded-xl px-4 py-2 font-semibold">Open app</Link> : (<>
             <button onClick={() => setAuth("signin")} className="rounded-xl px-4 py-2 font-semibold text-muted hover:text-ink">Sign in</button>
             <button onClick={() => setAuth("signup")} className="glow-btn rounded-xl px-4 py-2 font-semibold">Get started</button></>)}
         </div>
@@ -44,10 +44,12 @@ export default function LandingPage() {
         <section className="mx-auto max-w-3xl pb-16 pt-16 text-center">
           <h1 className="rise gradient-text text-5xl font-extrabold leading-[1.05] sm:text-7xl">Turn your notes into exam-ready review sets</h1>
           <p className="rise mx-auto mt-6 max-w-xl text-lg text-muted" style={{ animationDelay: ".1s" }}>Upload what you already have, organize it by course, and practice with flashcards and quizzes that keep you moving.</p>
-          <div className="rise mt-8 flex flex-wrap justify-center gap-3" style={{ animationDelay: ".2s" }}>
-            <button onClick={() => (user ? null : setAuth("signup"))} className="glow-btn rounded-xl px-6 py-3 text-lg font-semibold">{user ? <Link to="/app">Open your library</Link> : "Start studying free"}</button>
-            {!user && <button onClick={() => setAuth("signin")} className="glass rounded-xl px-6 py-3 text-lg font-semibold transition hover:bg-surface">I have an account</button>}
-          </div>
+          {authReady && <div className="rise mt-8 flex flex-wrap justify-center gap-3" style={{ animationDelay: ".2s" }}>
+            {user ? <Link to="/app" className="glow-btn rounded-xl px-6 py-3 text-lg font-semibold">Open your library</Link> : <>
+              <button onClick={() => setAuth("signup")} className="glow-btn rounded-xl px-6 py-3 text-lg font-semibold">Start studying free</button>
+              <button onClick={() => setAuth("signin")} className="glass rounded-xl px-6 py-3 text-lg font-semibold transition hover:bg-surface">I have an account</button>
+            </>}
+          </div>}
           <div className="rise mt-8 flex items-center justify-center gap-3 text-sm text-muted" style={{ animationDelay: ".3s" }}>
             <div className="flex -space-x-2" aria-hidden>{["#5566ee", "#7c5cff", "#2aa6a0", "#d4688f"].map((c) => <span key={c} className="h-7 w-7 rounded-full border-2 border-paper" style={{ background: c }} />)}</div>
             <span>Placeholder social proof: 4.9 rating from early students</span>

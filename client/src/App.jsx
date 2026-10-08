@@ -11,12 +11,18 @@ import FlashcardsPage from "./pages/FlashcardsPage.jsx";
 import QuizPage from "./pages/QuizPage.jsx";
 import GuidePage from "./pages/GuidePage.jsx";
 
-// Route guard: the app area requires a (mock) session.
-const RequireAuth = ({ children }) => (useStudyStore((s) => s.user) ? children : <Navigate to="/" replace />);
+const RequireAuth = ({ children }) => {
+  const authReady = useStudyStore((s) => s.authReady);
+  const user = useStudyStore((s) => s.user);
+  if (!authReady) return <p role="status" className="mx-auto max-w-5xl px-4 py-8 text-muted">Restoring your session...</p>;
+  return user ? children : <Navigate to="/" replace />;
+};
 
 export default function App() {
   const theme = useStudyStore((s) => s.theme);
+  const restoreSession = useStudyStore((s) => s.restoreSession);
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
+  useEffect(() => { restoreSession(); }, [restoreSession]);
 
   return (
     <Routes>
