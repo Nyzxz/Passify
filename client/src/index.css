@@ -1,25 +1,43 @@
 @import "tailwindcss";
 
-/* Design tokens. Ink-on-cool-paper with one cobalt accent; status colors all pass WCAG AA on white. */
-@theme {
-  --color-paper: #f2f5fb;
-  --color-ink: #14213d;
-  --color-muted: #4a5878;
-  --color-cobalt: #2848d8;
+/* Tokens are CSS variables so dark (default) and light share one set of utilities. */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-cobalt: #5566ee;
   --color-mint: #0e7a4e;
-  --color-amber: #a64b05;
-  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --color-amber: #b4540a;
+  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
   --font-serif: "Source Serif 4", Georgia, serif;
 }
+:root, [data-theme="dark"] { --paper:#07080c; --ink:#eef0f6; --muted:#9ba3b7; --surface:rgba(255,255,255,.05); --line:rgba(255,255,255,.1); --glow:rgba(85,102,238,.25); color-scheme: dark; }
+[data-theme="light"] { --paper:#f4f6fb; --ink:#12182b; --muted:#4a5878; --surface:#ffffff; --line:rgba(18,24,43,.12); --glow:rgba(85,102,238,.14); color-scheme: light; }
 
-body { @apply bg-paper text-ink antialiased; font-family: system-ui, sans-serif; }
-h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
-:focus-visible { outline: 3px solid var(--color-cobalt); outline-offset: 2px; }
+body { font-family: var(--font-sans); color: var(--ink);
+  background: radial-gradient(60rem 28rem at 50% -8%, var(--glow), transparent) no-repeat, var(--paper); background-attachment: fixed; }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+input, textarea, select { color: inherit; }
+::placeholder { color: var(--muted); }
+:focus-visible { outline: 3px solid #8e9bff; outline-offset: 2px; }
 
-/* Flashcard 3D flip: the one signature motion in the app. */
+.glass { background: var(--surface); border: 1px solid var(--line); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.gradient-text { background: linear-gradient(120deg, var(--ink) 20%, #8e9bff 60%, #c58bff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.glow-btn { background: var(--color-cobalt); color: #fff; box-shadow: 0 0 0 1px rgba(255,255,255,.15) inset, 0 8px 30px -8px var(--color-cobalt); transition: transform .15s, filter .15s; }
+.glow-btn:hover { filter: brightness(1.12); } .glow-btn:active { transform: scale(.97); }
+
+/* The one orchestrated entrance: hero content rises once on load. */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes pop { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+.pop { animation: pop .18s ease-out both; }
+
 .flip-scene { perspective: 1200px; }
 .flip-inner { transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(.3,.7,.2,1); }
 .flip-inner.is-flipped { transform: rotateY(180deg); }
 .flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .flip-back { transform: rotateY(180deg); }
-@media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .flip-inner, .rise, .pop { transition: none; animation: none; } }

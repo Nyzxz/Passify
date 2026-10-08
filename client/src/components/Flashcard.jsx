@@ -5,7 +5,7 @@ export default function Flashcard({ front, back, flipped, onFlip }) {
     <div className="flip-scene h-72 w-full cursor-pointer" onClick={onFlip}>
       <div className={`flip-inner relative h-full w-full ${flipped ? "is-flipped" : ""}`} role="group" aria-live="polite"
            aria-label={flipped ? "Answer side" : "Question side"}>
-        <div className={`${face} bg-white`} aria-hidden={flipped}>{front}</div>
+        <div className={`${face} bg-surface`} aria-hidden={flipped}>{front}</div>
         <div className={`${face} flip-back bg-cobalt text-white`} aria-hidden={!flipped}>{back}</div>
       </div>
     </div>

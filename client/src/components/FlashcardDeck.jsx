@@ -45,10 +45,10 @@ export default function FlashcardDeck({ cards }) {
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex gap-2">
-          <button className={`${btn} border border-ink/20 bg-white hover:bg-paper`} onClick={() => go(-1)} disabled={index === 0}>
+          <button className={`${btn} border border-ink/20 bg-surface hover:bg-paper`} onClick={() => go(-1)} disabled={index === 0}>
             <ChevronLeft size={18} aria-hidden /> Previous
           </button>
-          <button className={`${btn} border border-ink/20 bg-white hover:bg-paper`} onClick={() => go(1)} disabled={index === cards.length - 1}>
+          <button className={`${btn} border border-ink/20 bg-surface hover:bg-paper`} onClick={() => go(1)} disabled={index === cards.length - 1}>
             Next <ChevronRight size={18} aria-hidden />
           </button>
         </div>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Trash2 } from "lucide-react";
 import { useStudyStore } from "../store/useStudyStore.js";
 
-const field = "w-full rounded-lg border-2 border-ink/15 bg-white p-3 focus:border-cobalt";
+const field = "w-full rounded-lg border-2 border-ink/15 bg-surface p-3 focus:border-cobalt";
 const blank = () => ({ front: "", back: "" });
 
 export default function CreateSet() {
@@ -20,7 +20,7 @@ export default function CreateSet() {
     const valid = cards.filter((c) => c.front.trim() && c.back.trim());
     if (!meta.title.trim()) return setError("Give your set a title.");
     if (!valid.length) return setError("Add at least one card with a question and an answer.");
-    navigate(`/sets/${addSet({ ...meta, subject: meta.subject || "General", examDate: meta.examDate || null, cards: valid })}`);
+    navigate(`/app/sets/${addSet({ ...meta, subject: meta.subject || "General", examDate: meta.examDate || null, cards: valid })}`);
   };
 
   return (
@@ -36,7 +36,7 @@ export default function CreateSet() {
       <fieldset className="space-y-3">
         <legend className="mb-2 text-xl font-bold">Flashcards</legend>
         {cards.map((c, i) => (
-          <div key={i} className="grid gap-3 rounded-2xl border border-ink/10 bg-white p-4 sm:grid-cols-[1fr_1fr_auto]">
+          <div key={i} className="grid gap-3 rounded-2xl border border-ink/10 bg-surface p-4 sm:grid-cols-[1fr_1fr_auto]">
             <input aria-label={`Card ${i + 1} question`} placeholder="Question" className={field} value={c.front} onChange={(e) => updateCard(i, "front", e.target.value)} />
             <input aria-label={`Card ${i + 1} answer`} placeholder="Answer" className={field} value={c.back} onChange={(e) => updateCard(i, "back", e.target.value)} />
             <button type="button" aria-label={`Remove card ${i + 1}`} disabled={cards.length === 1}

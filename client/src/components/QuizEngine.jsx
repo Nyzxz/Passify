@@ -41,7 +41,7 @@ export default function QuizEngine({ setId, cards }) {
   if (state.done) {
     const pct = Math.round((state.score / questions.length) * 100);
     return (
-      <div className="rounded-2xl bg-white p-8 text-center">
+      <div className="rounded-2xl bg-surface p-8 text-center">
         <h2 className="text-3xl font-bold">{state.score} / {questions.length} correct ({pct}%)</h2>
         <button onClick={() => dispatch({ type: "reset" })} className="mt-6 rounded-lg bg-cobalt px-5 py-2 font-semibold text-white">Try again</button>
       </div>
@@ -50,7 +50,7 @@ export default function QuizEngine({ setId, cards }) {
 
   const answered = state.picked !== null;
   return (
-    <div className="rounded-2xl bg-white p-6">
+    <div className="rounded-2xl bg-surface p-6">
       <div className="mb-4 flex items-center justify-between text-sm text-muted">
         <span>Question {state.i + 1} of {questions.length}</span>
         <select aria-label="Quiz mode" value={mode} onChange={(e) => { setMode(e.target.value); dispatch({ type: "reset" }); }}
@@ -87,7 +87,7 @@ export default function QuizEngine({ setId, cards }) {
       {answered && (
         <div className="mt-4 flex items-center justify-between" aria-live="polite">
           <p className="font-semibold">{norm(state.picked) === norm(q.answer) ? "Correct" : `Not quite. Answer: ${q.answer}`}</p>
-          <button onClick={next} className="rounded-lg bg-ink px-4 py-2 font-semibold text-white">
+          <button onClick={next} className="rounded-lg bg-cobalt px-4 py-2 font-semibold text-white">
             {state.i + 1 >= questions.length ? "See score" : "Next question"}
           </button>
         </div>

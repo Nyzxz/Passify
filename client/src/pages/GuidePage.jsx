@@ -8,7 +8,7 @@ export default function GuidePage() {
   if (!set) return <p>Set not found.</p>;
   return (
     <article className="mx-auto max-w-[65ch]">
-      <Link to={`/sets/${id}`} className="text-cobalt underline">Back to {set.title}</Link>
+      <Link to={`/app/sets/${id}`} className="text-cobalt underline">Back to {set.title}</Link>
       <h1 className="mb-8 mt-2 text-4xl font-extrabold">{set.title}: study guide</h1>
       {set.guide.length === 0 && <p className="text-muted">This set has no guide yet. Guides you write will appear here.</p>}
       {set.guide.map((s) => (

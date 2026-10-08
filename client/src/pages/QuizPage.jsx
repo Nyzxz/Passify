@@ -8,7 +8,7 @@ export default function QuizPage() {
   if (!set) return <p>Set not found.</p>;
   return (
     <div className="mx-auto max-w-2xl">
-      <Link to={`/sets/${id}`} className="text-cobalt underline">Back to {set.title}</Link>
+      <Link to={`/app/sets/${id}`} className="text-cobalt underline">Back to {set.title}</Link>
       <h1 className="mb-6 mt-2 text-3xl font-extrabold">Quiz</h1>
       <QuizEngine setId={id} cards={set.cards} />
     </div>
