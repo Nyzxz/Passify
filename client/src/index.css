@@ -21,6 +21,7 @@ body { font-family: var(--font-sans); color: var(--ink);
   background: radial-gradient(60rem 28rem at 50% -8%, var(--glow), transparent) no-repeat, var(--paper); background-attachment: fixed; }
 h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
 input, textarea, select { color: inherit; }
+option { color: var(--ink); background-color: var(--paper); }
 ::placeholder { color: var(--muted); }
 :focus-visible { outline: 3px solid #8e9bff; outline-offset: 2px; }
 
