@@ -16,7 +16,7 @@ async function apiRequest(path, { token, body } = {}) {
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
   const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error || "The request could not be completed.");
+  if (!response.ok) throw new Error(result.error || `The server returned an unexpected response (${response.status}).`);
   return result.data;
 }
 
